@@ -23,32 +23,14 @@ public class UserActionsImplTest {
 
     private User user;
 
-    private List<ShoppingCartEntity> shoppingCarts;
-
-    private ShoppingCartEntity currentShoppingCart;
 
     @BeforeEach
     public void setUp() {
-        user = mock(User.class);
-        shoppingCarts = new ArrayList<>();
-
-        when(user.getUserId()).thenReturn(1L);
-        when(user.getUserName()).thenReturn("Dima");
-        when(user.getShoppingCarts()).thenReturn(shoppingCarts);
-        when(user.getCurrentShoppingCart()).thenReturn(currentShoppingCart);
-
+        user = new User(1L, "Dima");
+        userActions = new UserActionsImpl(user);
         store = mock(StoreImpl.class);
         positions = new HashMap<>();
         when(store.getPositions()).thenReturn(positions);
-
-        userActions = new UserActionsImpl(user);
-        userActions.createNewShoppingCart();
-//        userActions.createNewShoppingCart();
-//        userActions.createNewShoppingCart();
-//        userActions.createNewShoppingCart();
-//        userActions.createNewShoppingCart();
-
-        currentShoppingCart = shoppingCarts.get(0);
     }
 
 
@@ -69,7 +51,6 @@ public class UserActionsImplTest {
         expected.add(2L);
 
         userActions.getUser().getShoppingCarts().add(new ShoppingCartEntity(user));
-        userActions.getUser().getShoppingCarts().add(new ShoppingCartEntity(user));
 
         assertEquals(expected, userActions.findAllShoppingCartsIds());
 
@@ -83,7 +64,6 @@ public class UserActionsImplTest {
         user.getCurrentShoppingCart().getShoppingCart().put("merch3", 1);
         System.out.println(user.getCurrentShoppingCart().getShoppingCart().containsKey("merch1"));
         userActions.checkout();
-        verify(user, times(1)).getShoppingCarts();
         assertTrue(user.getCurrentShoppingCart().getShoppingCart().isEmpty());
 
     }
@@ -95,9 +75,7 @@ public class UserActionsImplTest {
         userActions.createNewShoppingCart();
         userActions.createNewShoppingCart();
         userActions.createNewShoppingCart();
-        userActions.createNewShoppingCart();
         assertEquals(5, user.getShoppingCarts().size());
-
     }
 
     @Test
@@ -112,7 +90,6 @@ public class UserActionsImplTest {
         userActions.createNewShoppingCart();
         userActions.createNewShoppingCart();
         userActions.createNewShoppingCart();
-        userActions.createNewShoppingCart();
 
         userActions.removeShoppingCart(1L);
 
@@ -122,13 +99,33 @@ public class UserActionsImplTest {
 
     @Test
     void pickShoppingCart() {
-//        userActions.findAllShoppingCartsIds();
-//        System.out.println(user.getCurrentShoppingCart().getShoppingCartId());
-//        userActions.removeShoppingCart(3L);
-//        userActions.pickShoppingCart(3L);
-//        System.out.println(user.getCurrentShoppingCart().getShoppingCartId());
-//        userActions.findAllShoppingCartsIds();
-//        assertEquals(3L, user.getCurrentShoppingCart().getShoppingCartId());
+        long expected = 3L;
+        user.getShoppingCarts().add(new ShoppingCartEntity(user));
+        user.getShoppingCarts().add(new ShoppingCartEntity(user));
+        user.getShoppingCarts().add(new ShoppingCartEntity(user));
+        user.getShoppingCarts().add(new ShoppingCartEntity(user));
+        user.getShoppingCarts().add(new ShoppingCartEntity(user));
+        System.out.println(user.getShoppingCarts());
+        userActions.getUser();
+        userActions.pickShoppingCart(3L);
+        System.out.println(user.getCurrentShoppingCart().getShoppingCartId());
 
+        assertEquals(expected, user.getCurrentShoppingCart().getShoppingCartId());
+    }
+    @Test
+    void pickNotExistingShoppingCart() {
+        long expected = 7L;
+        user.getShoppingCarts().add(new ShoppingCartEntity(user));
+        user.getShoppingCarts().add(new ShoppingCartEntity(user));
+        user.getShoppingCarts().add(new ShoppingCartEntity(user));
+        user.getShoppingCarts().add(new ShoppingCartEntity(user));
+        user.getShoppingCarts().add(new ShoppingCartEntity(user));
+        userActions.removeShoppingCart(3L);
+        System.out.println(user.getShoppingCarts());
+        userActions.getUser();
+        userActions.pickShoppingCart(3L);
+        System.out.println(user.getCurrentShoppingCart().getShoppingCartId());
+
+        assertEquals(expected, user.getCurrentShoppingCart().getShoppingCartId());
     }
 }

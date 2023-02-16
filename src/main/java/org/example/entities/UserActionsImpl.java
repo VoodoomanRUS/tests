@@ -87,7 +87,6 @@ public class UserActionsImpl implements UserActions {
                                 .equals(id))
                 .findFirst()
                 .orElseGet(() -> new ShoppingCartEntity(user))
-//                ;
         );
     }
 

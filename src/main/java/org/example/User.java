@@ -32,7 +32,8 @@ public class User {
     public User(Long userId, String userName) {
         this.userId = userId;
         this.userName = userName;
-        this.currentShoppingCart = new ShoppingCartEntity(this);
+        shoppingCarts.add(new ShoppingCartEntity(this));
+        this.currentShoppingCart = this.getShoppingCarts().get(0);
     }
 
 }
