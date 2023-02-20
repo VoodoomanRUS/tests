@@ -10,9 +10,9 @@ import java.util.HashMap;
 @Getter
 public class ShoppingCartEntity implements ShoppingCart {
 
-    private final User user;
-    private final Long shoppingCartId;
-    private final HashMap<String, Integer> shoppingCart = new HashMap<>();
+    private User user;
+    private Long shoppingCartId;
+    private HashMap<String, Integer> shoppingCart = new HashMap<>();
 
     public ShoppingCartEntity(User user) {
         this.user = user;
@@ -54,7 +54,7 @@ public class ShoppingCartEntity implements ShoppingCart {
             shoppingCart.remove(merchName);
             System.out.println("Товар " + merchName + " удалён из корзины пользователя " + user.getUserId());
         } else {
-            System.out.println("В корзине пользователя " + user.getUserId() + "отсутствует данный товар!");
+            System.out.println("В корзине пользователя " + user.getUserId() + " отсутствует данный товар!");
         }
     }
 
@@ -63,9 +63,10 @@ public class ShoppingCartEntity implements ShoppingCart {
      * */
     @Override
     public void updatePositionInCart(String merchName, Integer newCount, StoreImpl store) {
-        deletePositionFromCart(merchName, store);
-        addPositionToCart(merchName, newCount, store);
-        System.out.println("Количество товара " + merchName + " у пользователя " + user.getUserId() + " изменено!!!");
+        if (store.getPositions().get(merchName) >= newCount) {
+            shoppingCart.put(merchName, newCount);
+            System.out.println("Количество товара " + merchName + " у пользователя " + user.getUserId() + " изменено!!!");
+        }
     }
 
     /*

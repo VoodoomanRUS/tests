@@ -18,7 +18,6 @@ public class UserActionsImpl implements UserActions {
 
     public UserActionsImpl(User user) {
         this.user = user;
-//        this.currentShoppingCart = new ShoppingCartEntity(user);
     }
 
 

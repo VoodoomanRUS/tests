@@ -1,5 +1,4 @@
-package org.example.entities;
-
+import org.example.entities.StoreImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

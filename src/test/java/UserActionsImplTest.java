@@ -1,23 +1,24 @@
-package org.example.entities;
-
 import org.example.User;
+import org.example.entities.ShoppingCartEntity;
+import org.example.entities.StoreImpl;
+import org.example.entities.UserActionsImpl;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
 
 public class UserActionsImplTest {
 
-    private StoreImpl store;
+    private ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-    private Map<String, Integer> positions;
+    private StoreImpl store;
 
     private UserActionsImpl userActions;
 
@@ -28,20 +29,24 @@ public class UserActionsImplTest {
     public void setUp() {
         user = new User(1L, "Dima");
         userActions = new UserActionsImpl(user);
-        store = mock(StoreImpl.class);
-        positions = new HashMap<>();
-        when(store.getPositions()).thenReturn(positions);
+        store = new StoreImpl();
+        System.setOut(new PrintStream(output));
+
     }
 
 
     @Test
     void findAllStoredMerch() {
         store.setPosition("merch1", 1);
-        store.setPosition("merch2", 1);
-        store.setPosition("merch3", 1);
+        store.setPosition("merch2", 2);
 
         userActions.findAllStoredMerch(store);
-        verify(store, times(1)).getPositions();
+
+
+        assertEquals("merch1, 1 единиц на складе." + System.lineSeparator()
+                        + "merch2, 2 единиц на складе." + System.lineSeparator()
+                , output.toString());
+
     }
 
     @Test
@@ -106,12 +111,12 @@ public class UserActionsImplTest {
         user.getShoppingCarts().add(new ShoppingCartEntity(user));
         user.getShoppingCarts().add(new ShoppingCartEntity(user));
         System.out.println(user.getShoppingCarts());
-        userActions.getUser();
         userActions.pickShoppingCart(3L);
         System.out.println(user.getCurrentShoppingCart().getShoppingCartId());
 
         assertEquals(expected, user.getCurrentShoppingCart().getShoppingCartId());
     }
+
     @Test
     void pickNotExistingShoppingCart() {
         long expected = 7L;
@@ -122,10 +127,14 @@ public class UserActionsImplTest {
         user.getShoppingCarts().add(new ShoppingCartEntity(user));
         userActions.removeShoppingCart(3L);
         System.out.println(user.getShoppingCarts());
-        userActions.getUser();
         userActions.pickShoppingCart(3L);
         System.out.println(user.getCurrentShoppingCart().getShoppingCartId());
 
         assertEquals(expected, user.getCurrentShoppingCart().getShoppingCartId());
+    }
+
+    @AfterEach
+    public void cleanUpStreams() {
+        System.setOut(null);
     }
 }
